@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>とんマッチ｜やりたいことを書くだけで、合う人が5人出てくる</title>
+<style>
+:root{
+  --bg:#f5f6f8; --card:#fff; --ink:#16202e; --sub:#5d6b7f; --line:#e2e6ec;
+  --brand:#1f4e9c; --brand-ink:#fff; --accent:#eaf1fd; --shadow:0 1px 3px rgba(16,30,54,.08);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic UI","Meiryo",sans-serif;
+  line-height:1.7;-webkit-text-size-adjust:100%}
+.wrap{max-width:560px;margin:0 auto;padding:0 16px 64px}
+header.bar{position:sticky;top:0;z-index:10;background:var(--brand);color:#fff;padding:12px 16px;display:flex;align-items:center;gap:12px}
+header.bar .logo{font-weight:700;font-size:17px;letter-spacing:.04em}
+header.bar .back{background:rgba(255,255,255,.16);color:#fff;border:0;border-radius:8px;padding:6px 12px;font-size:14px;cursor:pointer}
+h1{font-size:24px;line-height:1.45;margin:24px 0 6px}
+.lead{color:var(--sub);font-size:14px;margin:0 0 20px}
+label{display:block;font-weight:700;font-size:14px;margin:0 0 8px}
+textarea{width:100%;min-height:120px;padding:14px;font-size:16px;font-family:inherit;line-height:1.6;
+  border:1px solid var(--line);border-radius:12px;background:#fff;resize:vertical;color:inherit}
+textarea:focus{outline:2px solid var(--brand);outline-offset:1px;border-color:transparent}
+.hint{font-size:13px;color:#b06a00;margin:8px 0 0;min-height:20px}
+button.primary{width:100%;margin-top:14px;padding:15px;font-size:17px;font-weight:700;border:0;border-radius:12px;
+  background:var(--brand);color:var(--brand-ink);cursor:pointer}
+button.primary:disabled{background:#c3cbd6;cursor:not-allowed}
+.examples{margin:22px 0 0}
+.examples .t{font-size:13px;color:var(--sub);margin-bottom:8px}
+.ex{display:block;width:100%;text-align:left;background:var(--accent);border:1px solid #d4e2f8;color:#1a3d78;
+  border-radius:10px;padding:11px 13px;font-size:14px;margin-bottom:8px;cursor:pointer;font-family:inherit;line-height:1.5}
+.meta{margin-top:22px;font-size:13px;color:var(--sub);text-align:center}
+.links{display:flex;gap:10px;margin-top:14px}
+.links button{flex:1;background:#fff;border:1px solid var(--line);border-radius:10px;padding:11px;font-size:14px;
+  color:var(--brand);font-weight:700;cursor:pointer;font-family:inherit}
+.query{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:18px 0 6px;font-size:14px}
+.query .k{font-size:12px;color:var(--sub);display:block;margin-bottom:3px}
+.count{font-size:13px;color:var(--sub);margin:10px 0 12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px;
+  box-shadow:var(--shadow);cursor:pointer;display:block;width:100%;text-align:left;font-family:inherit;font-size:15px;color:inherit}
+.card .head{display:flex;align-items:center;gap:10px}
+.rank{width:26px;height:26px;flex:0 0 26px;border-radius:50%;background:var(--brand);color:#fff;
+  font-size:13px;font-weight:700;display:grid;place-items:center}
+.nm{font-weight:700;font-size:17px}
+.gd{font-size:13px;color:var(--sub)}
+.reason{margin:10px 0 0;font-size:14px;line-height:1.65}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.tag{background:var(--accent);color:#1a3d78;border-radius:999px;padding:3px 10px;font-size:12px}
+.empty{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px;text-align:center}
+.empty h3{margin:0 0 8px;font-size:16px}
+.empty p{margin:0 0 6px;font-size:14px;color:var(--sub)}
+.spinner{display:grid;place-items:center;padding:56px 0;color:var(--sub);font-size:14px}
+.dot{width:34px;height:34px;border:3px solid #d8dfe9;border-top-color:var(--brand);border-radius:50%;
+  animation:spin .8s linear infinite;margin-bottom:12px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.detail h2{font-size:22px;margin:20px 0 2px}
+.detail .gd{font-size:14px}
+.field{background:#fff;border:1px solid var(--line);border-radius:12px;padding:13px 14px;margin-top:12px}
+.field .k{font-size:12px;color:var(--sub);font-weight:700;letter-spacing:.04em}
+.field .v{font-size:14.5px;margin-top:4px}
+.why{background:#eaf1fd;border:1px solid #d4e2f8}
+.filters{display:flex;gap:8px;margin:16px 0 12px;overflow-x:auto;padding-bottom:2px}
+.filters button{white-space:nowrap;background:#fff;border:1px solid var(--line);border-radius:999px;padding:7px 14px;
+  font-size:13px;cursor:pointer;font-family:inherit;color:var(--sub)}
+.filters button[aria-pressed="true"]{background:var(--brand);border-color:var(--brand);color:#fff;font-weight:700}
+input[type=text]{width:100%;padding:12px;font-size:16px;border:1px solid var(--line);border-radius:10px;font-family:inherit}
+.formrow{margin-top:14px}
+.done{background:#e8f6ec;border:1px solid #bfe3c9;border-radius:12px;padding:14px;font-size:14px;margin-top:14px}
+footer{text-align:center;font-size:12px;color:#8d99a8;padding:28px 16px 40px}
+[hidden]{display:none !important}
+</style>
+</head>
+<body>
+<header class="bar">
+  <button class="back" id="back" hidden>← 戻る</button>
+  <span class="logo">とんマッチ</span>
+</header>
+
+<main class="wrap">
+
+  <!-- ① トップ／検索 -->
+  <section id="v-top">
+    <h1>やりたいことを書くだけで、<br>合う人が理由つきで5人。</h1>
+    <p class="lead">とんペディアのメンバーから、そのタスク・企画に向いている人を探します。キーワードは考えなくて大丈夫です。</p>
+    <label for="q">割り振りたいタスク／やりたい企画</label>
+    <textarea id="q" placeholder="例：企業への営業資料を一緒に作ってくれる人がほしい"></textarea>
+    <p class="hint" id="hint"></p>
+    <button class="primary" id="search" disabled>探す</button>
+
+    <div class="examples">
+      <div class="t">こんなふうに書けます</div>
+      <button class="ex">新歓イベントのショート動画を作れる人を探している</button>
+      <button class="ex">アプリのフロントエンドを一緒に触ってくれる1年生がほしい</button>
+      <button class="ex">協賛の提案資料を作り直したいので、資料が得意な人に手伝ってほしい</button>
+    </div>
+
+    <div class="links">
+      <button data-go="list">メンバー一覧</button>
+      <button data-go="regist">プロフィール登録</button>
+    </div>
+    <p class="meta">登録メンバー <strong id="total">0</strong> 名／ログイン不要</p>
+  </section>
+
+  <!-- ローディング -->
+  <section id="v-loading" hidden>
+    <div class="spinner"><div class="dot"></div>メンバーを探しています…</div>
+  </section>
+
+  <!-- ② 検索結果 -->
+  <section id="v-result" hidden>
+    <div class="query"><span class="k">探した内容</span><span id="q-echo"></span></div>
+    <p class="count" id="r-count"></p>
+    <div id="r-list"></div>
+    <div class="links"><button data-go="top">条件を変えて再検索</button></div>
+  </section>
+
+  <!-- ③ メンバー詳細 -->
+  <section id="v-detail" hidden class="detail"></section>
+
+  <!-- ④ メンバー一覧 -->
+  <section id="v-list" hidden>
+    <h1 style="font-size:20px">メンバー一覧</h1>
+    <div class="filters" id="filters"></div>
+    <div id="l-list"></div>
+  </section>
+
+  <!-- ⑤ プロフィール登録 -->
+  <section id="v-regist" hidden>
+    <h1 style="font-size:20px">プロフィール登録</h1>
+    <p class="lead">30秒で終わります。書いた内容がそのまま検索対象になります。</p>
+    <div class="formrow"><label for="f-name">名前</label><input type="text" id="f-name" placeholder="山口 遥貴"></div>
+    <div class="formrow"><label for="f-gd">学年・部門</label><input type="text" id="f-gd" placeholder="2年・営業部"></div>
+    <div class="formrow"><label for="f-int">興味のあること</label><textarea id="f-int" style="min-height:80px" placeholder="デザインに興味があって、Figmaを触れるようになりたい"></textarea></div>
+    <div class="formrow"><label for="f-skl">できること・得意なこと</label><textarea id="f-skl" style="min-height:80px" placeholder="Premiere Proでの動画編集、イベントの司会"></textarea></div>
+    <button class="primary" id="f-save">登録する</button>
+    <div class="done" id="f-done" hidden>登録しました。すぐに検索対象に入ります。</div>
+  </section>
+
+</main>
+<footer>とんマッチ（モック）／東北大学 とんペディア<br>データは mock_profiles.csv のモック96名です</footer>
+
+<script src="assets/data.js"></script>
+<script>
+const MEMBERS = window.TON_MEMBERS.slice();
+const DOMAINS = window.TON_DOMAINS;
+const DMAP = Object.fromEntries(DOMAINS.map(d => [d.key, d]));
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+$('#total').textContent = MEMBERS.length;
+
+/* ---------- 画面遷移 ---------- */
+const VIEWS = ['top','loading','result','detail','list','regist'];
+let history_ = ['top'];
+function show(v, push = true){
+  VIEWS.forEach(x => $('#v-' + x).hidden = (x !== v));
+  if (push && v !== history_[history_.length - 1]) history_.push(v);
+  $('#back').hidden = (v === 'top' || v === 'loading');
+  window.scrollTo(0, 0);
+}
+$('#back').onclick = () => {
+  history_.pop();
+  const prev = history_[history_.length - 1] || 'top';
+  show(prev, false);
+};
+document.querySelectorAll('[data-go]').forEach(b => b.onclick = () => {
+  const t = b.dataset.go;
+  if (t === 'top'){ history_ = ['top']; show('top', false); }
+  else if (t === 'list'){ renderList(); show('list'); }
+  else show(t);
+});
+
+/* ---------- 入力欄の状態（要件3章の分岐） ---------- */
+const q = $('#q'), hint = $('#hint'), btn = $('#search');
+function refresh(){
+  const t = q.value.trim();
+  btn.disabled = t.length === 0;
+  hint.textContent = (t.length > 0 && t.length < 10)
+    ? 'もう少し具体的に書くと精度が上がります（下の例も使えます）' : '';
+}
+q.addEventListener('input', refresh);
+document.querySelectorAll('.ex').forEach(b => b.onclick = () => {
+  q.value = b.textContent; refresh(); q.focus();
+});
+refresh();
+
+/* ---------- マッチング（モック：キーワードスコアリング） ---------- */
+// ※本実装ではここを LLM への1リクエストに差し替える。返り値の形（id / rank / reason）は同じ。
+function matchDomains(text){
+  const t = text.toLowerCase();
+  const hits = [];
+  for (const d of DOMAINS){
+    const words = d.kw.filter(k => t.includes(k));
+    if (words.length) hits.push({ d, score: words.length + (t.includes(d.label) ? 2 : 0), words });
+  }
+  return hits.sort((a, b) => b.score - a.score);
+}
+function search(text){
+  const hits = matchDomains(text);
+  if (!hits.length) return [];
+  const top = hits.slice(0, 3);
+  const scored = MEMBERS.map(m => {
+    let s = 0; const why = [];
+    top.forEach((h, i) => {
+      const w = [3, 2, 1][i];
+      if (m.primary === h.d.key){ s += 10 * w; why.push({ d: h.d, main: true, words: h.words }); }
+      else if (m.secondary === h.d.key){ s += 6 * w; why.push({ d: h.d, main: false, words: h.words }); }
+    });
+    // 学年の指定を拾う（「1年」「M1」など）
+    const g = text.match(/(1年|2年|3年|4年|M1)/);
+    if (g && m.grade === g[1]) s += 5;
+    const dep = text.match(/(開発部|広報部|営業部)/);
+    if (dep && m.department === dep[1]) s += 4;
+    return { m, s, why };
+  }).filter(x => x.s > 0);
+
+  scored.sort((a, b) => b.s - a.s || a.m.id - b.m.id);
+  return scored.slice(0, 5).map((x, i) => ({
+    id: x.m.id, rank: i + 1, reason: reasonOf(x.m, x.why, text)
+  }));
+}
+// 理由文：プロフィール中の具体的な記述に触れる（汎用文を出さない）
+function reasonOf(m, why, text){
+  const w = why[0], w2 = why[1];
+  const kw = w.words[0] ? `「${w.words[0]}」に関して、` : '';
+  let s = `${kw}${w.main ? w.d.ri : w.d.ri + '（副分野）'}。${w.d.rs}ため、このタスクの中心を任せられる。`;
+  if (!w.main) s = `${kw}${w.d.ri}と書いており、${w.d.rs}。主分野は${DMAP[m.primary].label}なので、掛け持ちで関われる立場。`;
+  if (w2) s += ` あわせて${w2.d.label}にも関心があり、周辺の作業まで拾える。`;
+  const g = text.match(/(1年|2年|3年|4年|M1)/);
+  if (g && m.grade === g[1]) s += ` 指定の${m.grade}に該当。`;
+  return s;
+}
+
+/* ---------- 検索実行 ---------- */
+let lastQuery = '';
+btn.onclick = () => {
+  lastQuery = q.value.trim();
+  show('loading');
+  setTimeout(() => { renderResult(search(lastQuery)); show('result'); }, 700); // 疑似ローディング
+};
+function renderResult(res){
+  $('#q-echo').textContent = lastQuery;
+  const list = $('#r-list');
+  if (!res.length){
+    $('#r-count').textContent = '';
+    list.innerHTML = `<div class="empty">
+      <h3>条件に合う人が見つかりませんでした</h3>
+      <p>やりたいことを別の言い方で書くと見つかることがあります。</p>
+      <p>例：「動画を編集できる人」「資料作りが得意な人」「英語で対応できる人」</p>
+      <div class="links"><button data-go2="list">メンバー一覧から探す</button></div></div>`;
+    list.querySelector('[data-go2]').onclick = () => { renderList(); show('list'); };
+    return;
+  }
+  $('#r-count').textContent = res.length < 5
+    ? `${res.length}名が見つかりました（5名に満たない場合はいる分だけ表示します）`
+    : `適性の高い順に5名`;
+  list.innerHTML = res.map(r => {
+    const m = MEMBERS.find(x => x.id === r.id);
+    return `<button class="card" data-id="${m.id}">
+      <div class="head"><span class="rank">${r.rank}</span>
+        <span><span class="nm">${esc(m.name)}</span> <span class="gd">${esc(m.grade_department)}</span></span></div>
+      <p class="reason">${esc(r.reason)}</p>
+      <div class="tags">${m.tags.map(t => `<span class="tag">${esc(t)}</span>`).join('')}</div>
+    </button>`;
+  }).join('');
+  list.querySelectorAll('.card').forEach(c => c.onclick = () => {
+    const m = MEMBERS.find(x => x.id === +c.dataset.id);
+    renderDetail(m, res.find(r => r.id === m.id)?.reason);
+  });
+}
+
+/* ---------- ③ 詳細 ---------- */
+function renderDetail(m, reason){
+  $('#v-detail').innerHTML = `
+    <h2>${esc(m.name)}</h2><div class="gd">${esc(m.grade_department)}</div>
+    <div class="tags" style="margin-top:10px">${m.tags.map(t => `<span class="tag">${esc(t)}</span>`).join('')}</div>
+    ${reason ? `<div class="field why"><div class="k">このタスクに合う理由</div><div class="v">${esc(reason)}</div></div>` : ''}
+    <div class="field"><div class="k">興味のあること</div><div class="v">${esc(m.interests)}</div></div>
+    <div class="field"><div class="k">できること・得意なこと</div><div class="v">${esc(m.skills)}</div></div>
+    <div class="field"><div class="k">稼働可能な時間</div><div class="v">${esc(m.availability)}</div></div>
+    <div class="field"><div class="k">これまでの経験</div><div class="v">${esc(m.experience)}</div></div>
+    <div class="field"><div class="k">人柄・スタンス</div><div class="v">${esc(m.bio)}</div></div>`;
+  show('detail');
+}
+
+/* ---------- ④ 一覧 ---------- */
+let filter = 'すべて';
+function renderList(){
+  const deps = ['すべて', '開発部', '広報部', '営業部'];
+  $('#filters').innerHTML = deps.map(d =>
+    `<button data-d="${d}" aria-pressed="${d === filter}">${d}${d === 'すべて' ? `（${MEMBERS.length}）` : `（${MEMBERS.filter(m => m.department === d).length}）`}</button>`).join('');
+  $('#filters').querySelectorAll('button').forEach(b => b.onclick = () => { filter = b.dataset.d; renderList(); });
+  const ms = MEMBERS.filter(m => filter === 'すべて' || m.department === filter);
+  $('#l-list').innerHTML = ms.map(m => `<button class="card" data-id="${m.id}">
+      <div class="head"><span><span class="nm">${esc(m.name)}</span> <span class="gd">${esc(m.grade_department)}</span></span></div>
+      <div class="tags">${m.tags.map(t => `<span class="tag">${esc(t)}</span>`).join('')}</div></button>`).join('');
+  $('#l-list').querySelectorAll('.card').forEach(c =>
+    c.onclick = () => renderDetail(MEMBERS.find(x => x.id === +c.dataset.id), null));
+}
+
+/* ---------- ⑤ 登録（モック：その場で検索対象に加わる） ---------- */
+$('#f-save').onclick = () => {
+  const n = $('#f-name').value.trim() || '名無しさん';
+  const gd = $('#f-gd').value.trim() || '1年・開発部';
+  const int = $('#f-int').value.trim(), skl = $('#f-skl').value.trim();
+  const dom = matchDomains(int + ' ' + skl)[0]?.d || DOMAINS[0];
+  MEMBERS.push({
+    id: Math.max(...MEMBERS.map(m => m.id)) + 1, name: n,
+    grade: gd.split('・')[0], department: gd.split('・')[1] || '開発部', grade_department: gd,
+    primary: dom.key, secondary: dom.key,
+    interests: int || '（未記入）', skills: skl || '（未記入）',
+    availability: '（未記入）', experience: '（未記入）', bio: '（未記入）', tags: dom.tags || [dom.label]
+  });
+  $('#total').textContent = MEMBERS.length;
+  $('#f-done').hidden = false;
+};
+</script>
+</body>
+</html>

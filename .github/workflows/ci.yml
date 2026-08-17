@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ["20", "22", "24"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: 構文・データ契約・検索ロジックの検証
+        run: node tools/check.mjs
+
+      - name: モックデータの再生成結果が commit 済みファイルと一致するか
+        run: |
+          node tools/gen-mock.mjs
+          git diff --exit-code -- assets/data.js mock_profiles.csv \
+            || { echo "::error::assets/data.js または mock_profiles.csv が tools/gen-mock.mjs の出力と一致しません。再生成してcommitしてください。"; exit 1; }
+
+      - name: 静的サーバーの疎通確認
+        run: |
+          node tools/serve.mjs & SERVER_PID=$!
+          trap 'kill $SERVER_PID' EXIT
+          for i in $(seq 1 30); do
+            curl -sf -o /dev/null http://localhost:5173/ && break
+            sleep 0.5
+          done
+          for path in / /assets/data.js /mock_profiles.csv; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' "http://localhost:5173$path")
+            echo "  $path -> $code"
+            [ "$code" = "200" ] || { echo "::error::$path が 200 を返しません ($code)"; exit 1; }
+          done
+          code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:5173/no-such-file.html)
+          echo "  /no-such-file.html -> $code"
+          [ "$code" = "404" ] || { echo "::error::存在しないパスが 404 を返しません ($code)"; exit 1; }

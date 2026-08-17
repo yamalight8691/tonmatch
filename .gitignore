@@ -1,0 +1,11 @@
+node_modules/
+.DS_Store
+Thumbs.db
+*.log
+.env
+.env.local
+.vscode/
+.idea/
+
+# キャンプの配布資料。アプリの動作には不要なため追跡しない
+*.docx.pdf

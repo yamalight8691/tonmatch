@@ -1,0 +1,7 @@
+# 改行コードはLFに統一する（Windows/Linux 双方でCIの再生成チェックを一致させるため）
+* text=auto eol=lf
+
+# mock_profiles.csv は BOM付きUTF-8・CRLF で生成している。Gitに変換させない。
+*.csv -text
+
+*.pdf binary
